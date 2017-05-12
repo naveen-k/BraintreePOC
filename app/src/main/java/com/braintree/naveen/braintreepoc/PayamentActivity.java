@@ -29,10 +29,11 @@ public class PayamentActivity extends AppCompatActivity {
 
 
     private static final String SERVER_BASE = "https://test-server-buat.herokuapp.com"; // Replace with your own server
+    //private static final String SERVER_BASE = "https://192.168.0.11:8791"; // Replace with your own server
     private static final int REQUEST_CODE = Menu.FIRST;
     private AsyncHttpClient client = new AsyncHttpClient();
 
-    private String sClientToken;
+    private String sClientToken=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +49,15 @@ public class PayamentActivity extends AppCompatActivity {
                 onStartClick(view);
             }
         });
-        getToken();
+
 
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
+        if(sClientToken==null)
+            getToken();
     }
 
     private void getToken() {
@@ -94,7 +96,7 @@ public class PayamentActivity extends AppCompatActivity {
             requestParams.put("payment_method_nonce", paymentMethodNonce.getNonce());
             requestParams.put("amount", "10.00");
 
-            client.post(SERVER_BASE + "/checkouts", requestParams, new TextHttpResponseHandler() {
+            client.post(SERVER_BASE + "/checkout", requestParams, new TextHttpResponseHandler() {
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                     Toast.makeText(PayamentActivity.this, responseString, Toast.LENGTH_LONG).show();
@@ -110,7 +112,7 @@ public class PayamentActivity extends AppCompatActivity {
     }
 
     private void gettransectionDetails(String transectionID) {
-        client.get(SERVER_BASE + "/checkouts/"+transectionID, new TextHttpResponseHandler() {
+        client.get(SERVER_BASE + "/transaction_detail/"+transectionID, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 findViewById(R.id.btn_start).setEnabled(false);

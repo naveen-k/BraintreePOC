@@ -33,6 +33,7 @@ public class PayamentActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = Menu.FIRST;
     private AsyncHttpClient client = new AsyncHttpClient();
 
+    Button mTestTransection;
     private String sClientToken=null;
 
     @Override
@@ -42,7 +43,8 @@ public class PayamentActivity extends AppCompatActivity {
         // Set up the login form.
 
 
-        Button mTestTransection = (Button) findViewById(R.id.btn_start);
+         mTestTransection = (Button) findViewById(R.id.btn_start);
+        mTestTransection.setEnabled(false);
         mTestTransection.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,6 +68,7 @@ public class PayamentActivity extends AppCompatActivity {
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 findViewById(R.id.btn_start).setEnabled(false);
                 Toast.makeText(PayamentActivity.this, "Token issue..!", Toast.LENGTH_LONG).show();
+                mTestTransection.setEnabled(false);
             }
 
             @Override
@@ -73,6 +76,7 @@ public class PayamentActivity extends AppCompatActivity {
                 sClientToken = responseString;
                 findViewById(R.id.btn_start).setEnabled(true);
                 Toast.makeText(PayamentActivity.this, "Token !!!", Toast.LENGTH_LONG).show();
+                mTestTransection.setEnabled(true);
             }
         });
     }
@@ -82,7 +86,8 @@ public class PayamentActivity extends AppCompatActivity {
                 .amount("$10.00")
                 .primaryDescription("Awesome payment")
                 .secondaryDescription("Using the Client SDK")
-                .submitButtonText("Pay");
+                .submitButtonText("Pay")
+                .secondaryDescription("ticketid");
 
         startActivityForResult(paymentRequest.getIntent(this), REQUEST_CODE);
     }
@@ -95,6 +100,7 @@ public class PayamentActivity extends AppCompatActivity {
             RequestParams requestParams = new RequestParams();
             requestParams.put("payment_method_nonce", paymentMethodNonce.getNonce());
             requestParams.put("amount", "10.00");
+            requestParams.put("ticket_id", "tck_121212");
 
             client.post(SERVER_BASE + "/checkout", requestParams, new TextHttpResponseHandler() {
                 @Override
